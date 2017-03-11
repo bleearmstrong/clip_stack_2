@@ -35,21 +35,27 @@ class Example(QtGui.QWidget):
         self.initUI()
         self.start()
 
+    def clear(self, listwidget):
+        listwidget.clear()
+
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
+        self.clear_button = qt.QPushButton('Clear', self)
+        self.clear_button.clicked.connect(lambda: self.clear(self.list))
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
 
-        grid.addWidget(self.list, 1, 0, 5, 5)
-        grid.addWidget(self.exit_button, 1, 6)
+        grid.addWidget(self.list, 1, 0, 10, 10)
+        grid.addWidget(self.clear_button, 1, 11)
+        grid.addWidget(self.exit_button, 2, 11)
 
         self.setLayout(grid)
 
-        self.setGeometry(300, 300, 250, 150)
+        self.setGeometry(300, 300, 350, 350)
         self.setWindowTitle('Icon')
         self.setWindowIcon(QtGui.QIcon('web.png'))
 
