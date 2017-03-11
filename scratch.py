@@ -1,13 +1,13 @@
 import tkinter as tk
-from tkinter import ttk
 import pyperclip
-import time
+from tkinter import font
+
 
 root = tk.Tk()
 
 scrollbar = tk.Scrollbar(root)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-listbox = tk.Listbox(root)
+listbox = tk.Listbox(root, font= font.Font(size=12))
 listbox.pack()
 
 
@@ -17,7 +17,6 @@ scrollbar.config(command=listbox.yview)
 recent_value = ''
 def get_input():
     global recent_value
-    # while abs(time.time() - start) < 10:
     new_value = pyperclip.paste()
     if new_value != recent_value:
         recent_value = new_value
@@ -30,8 +29,15 @@ def get_item(evt):
 
 listbox.bind('<<ListboxSelect>>', get_item)
 
-butt = tk.Button(root, text='Delete All', command=lambda lb=listbox: lb.delete(0, tk.END))
-butt.pack()
+clear_button = tk.Button(root, text='Clear list', command=lambda lb=listbox: lb.delete(0, tk.END))
+clear_button.pack()
+
+def close_window():
+    root.destroy()
+
+exit_button = tk.Button(root, text='Exit', command=close_window)
+exit_button.pack()
+
 
 root.after(100, get_input)
 
