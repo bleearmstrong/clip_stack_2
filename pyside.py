@@ -48,6 +48,10 @@ class Example(QtGui.QWidget):
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
+        self.list.setStyleSheet("alternate-background-color: grey;"
+                                "background-color: white;"
+                                "color: black;"
+                                )
         self.list.clicked.connect(self.return_value)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
