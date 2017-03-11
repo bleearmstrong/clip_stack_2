@@ -2,6 +2,7 @@ import sys
 from PySide import QtGui
 import time
 import pyperclip
+import os
 
 import PySide.QtGui as qt
 import PySide.QtCore as qc
@@ -45,6 +46,19 @@ class Example(QtGui.QWidget):
     def return_value(self, index):
         pyperclip.copy(self.list.currentItem().text())
 
+    def save(self):
+        save_path = os.path.join(os.getcwd()
+                                 , 'stack.txt')
+        save_path = qt.QFileDialog.getSaveFileName(self
+                                                   , 'Save Stack'
+                                                   , save_path
+                                                   , 'stack.txt')
+        if len(save_path[0]) > 0:
+            with open(save_path[0], 'w') as save_file:
+                for i in range(self.list.count()):
+                    save_file.write(str(self.list.item(i).text()))
+                    save_file.write('\n<<entry_delimiter>>\n')
+
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
@@ -59,6 +73,8 @@ class Example(QtGui.QWidget):
         self.clear_item_button.clicked.connect(self.clear_item)
         self.clear_list_button = qt.QPushButton('Clear List', self)
         self.clear_list_button.clicked.connect(lambda: self.clear_list(self.list))
+        self.save_button = qt.QPushButton('Save List', self)
+        self.save_button.clicked.connect(self.save)
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
@@ -67,6 +83,7 @@ class Example(QtGui.QWidget):
         grid.addWidget(self.clear_item_button, 1, 11)
         grid.addWidget(self.clear_list_button, 2, 11)
         grid.addWidget(self.exit_button, 3, 11)
+        grid.addWidget(self.save_button, 4, 11)
 
         self.setLayout(grid)
 
