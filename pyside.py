@@ -35,7 +35,11 @@ class Example(QtGui.QWidget):
         self.initUI()
         self.start()
 
-    def clear(self, listwidget):
+    def clear_item(self):
+        item = self.list.selectedItems()
+        self.list.takeItem(self.list.row(item[0]))
+
+    def clear_list(self, listwidget):
         listwidget.clear()
 
     def return_value(self, index):
@@ -47,15 +51,18 @@ class Example(QtGui.QWidget):
         self.list.clicked.connect(self.return_value)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
-        self.clear_button = qt.QPushButton('Clear', self)
-        self.clear_button.clicked.connect(lambda: self.clear(self.list))
+        self.clear_item_button = qt.QPushButton('Clear Item', self)
+        self.clear_item_button.clicked.connect(self.clear_item)
+        self.clear_list_button = qt.QPushButton('Clear List', self)
+        self.clear_list_button.clicked.connect(lambda: self.clear_list(self.list))
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
 
         grid.addWidget(self.list, 1, 0, 10, 10)
-        grid.addWidget(self.clear_button, 1, 11)
-        grid.addWidget(self.exit_button, 2, 11)
+        grid.addWidget(self.clear_item_button, 1, 11)
+        grid.addWidget(self.clear_list_button, 2, 11)
+        grid.addWidget(self.exit_button, 3, 11)
 
         self.setLayout(grid)
 
