@@ -30,6 +30,9 @@ def get_item(evt):
 
 listbox.bind('<<ListboxSelect>>', get_item)
 
+butt = tk.Button(root, text='Delete All', command=lambda lb=listbox: lb.delete(0, tk.END))
+butt.pack()
+
 root.after(100, get_input)
 
 root.mainloop()
