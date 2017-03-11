@@ -31,12 +31,24 @@ class QCustomThread(qc.QThread):
 class Example(QtGui.QWidget):
     def __init__(self):
         super(Example, self).__init__()
-        self.list = qt.QListWidget(self)
-        self.list.setAlternatingRowColors(True)
+
         self.initUI()
         self.start()
 
     def initUI(self):
+        self.list = qt.QListWidget(self)
+        self.list.setAlternatingRowColors(True)
+        self.exit_button = qt.QPushButton('Exit', self)
+        self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
+
+        grid = qt.QGridLayout()
+        grid.setSpacing(5)
+
+        grid.addWidget(self.list, 1, 0, 5, 5)
+        grid.addWidget(self.exit_button, 1, 6)
+
+        self.setLayout(grid)
+
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('Icon')
         self.setWindowIcon(QtGui.QIcon('web.png'))
