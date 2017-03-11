@@ -8,7 +8,7 @@ root = tk.Tk()
 # scrollbar = tk.Scrollbar(root)
 # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 listbox = tk.Listbox(root, font= font.Font(size=12))
-listbox.grid(row=0, column=0)
+listbox.grid(row=0, column=0, columnspan=5, rowspan=10)
 # listbox.pack()
 
 
@@ -30,15 +30,15 @@ def get_item(evt):
 
 listbox.bind('<<ListboxSelect>>', get_item)
 
-clear_button = tk.Button(root, text='Clear list', command=lambda lb=listbox: lb.delete(0, tk.END))
-clear_button.grid(row=0, column=1)
+clear_button = tk.Button(root, text='Clear list', command=lambda lb=listbox: lb.delete(0, tk.END), width=10)
+clear_button.grid(row=0, column=6)
 # clear_button.pack()
 
 def close_window():
     root.destroy()
 
-exit_button = tk.Button(root, text='Exit', command=close_window)
-exit_button.grid(row=1, column=1)
+exit_button = tk.Button(root, text='Exit', command=close_window, width=10)
+exit_button.grid(row=1, column=6)
 # exit_button.pack()
 
 
