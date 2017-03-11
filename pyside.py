@@ -89,14 +89,29 @@ class Example(QtGui.QWidget):
                                                    , load_path)
         if len(load_path[0]) > 0:
             self.list.clear()
+            new_list = list()
             with open(load_path[0], 'r') as load_file:
                 for line in self.read_lines_delimiter(load_file, '<<entry_delimiter>>'):
                     if line.strip() != '':
-                        new_item = qt.QListWidgetItem(self.single_strip(line))
-                        self.list.insertItem(0, new_item)
+                        new_list.append(line)
+                for line in reversed(new_list):
+                    new_item = qt.QListWidgetItem(self.single_strip(line))
+                    self.list.insertItem(0, new_item)
 
-
-
+    def insert_stack(self):
+        insert_path = os.getcwd()
+        insert_path = qt.QFileDialog.getOpenFileName(self
+                                                     , 'Open Stack'
+                                                     , insert_path)
+        if len(insert_path[0]) > 0:
+            new_list = list()
+            with open(insert_path[0], 'r') as insert_file:
+                for line in self.read_lines_delimiter(insert_file, '<<entry_delimiter>>'):
+                    if line.strip() != '':
+                        new_list.append(line)
+                for item in reversed(new_list):
+                    new_item = qt.QListWidgetItem(self.single_strip(item))
+                    self.list.insertItem(0, new_item)
 
     def initUI(self):
         self.list = qt.QListWidget(self)
@@ -116,6 +131,8 @@ class Example(QtGui.QWidget):
         self.save_button.clicked.connect(self.save)
         self.load_button = qt.QPushButton('Load List', self)
         self.load_button.clicked.connect(self.load)
+        self.insert_button = qt.QPushButton('Insert List', self)
+        self.insert_button.clicked.connect(self.insert_stack)
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
@@ -126,6 +143,7 @@ class Example(QtGui.QWidget):
         grid.addWidget(self.exit_button, 3, 11)
         grid.addWidget(self.save_button, 4, 11)
         grid.addWidget(self.load_button, 5, 11)
+        grid.addWidget(self.insert_button, 6, 11)
 
         self.setLayout(grid)
 
