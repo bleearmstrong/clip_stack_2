@@ -3,6 +3,7 @@ from PySide import QtGui
 import time
 import pyperclip
 import os
+import re
 
 import PySide.QtGui as qt
 import PySide.QtCore as qc
@@ -59,6 +60,44 @@ class Example(QtGui.QWidget):
                     save_file.write(str(self.list.item(i).text()))
                     save_file.write('\n<<entry_delimiter>>\n')
 
+    def read_lines_delimiter(self, f, delim):
+        buf = ''
+        while True:
+            while delim in buf:
+                pos = buf.index(delim)
+                yield buf[:pos]
+                buf = buf[pos + len(delim):]
+            chunk = f.read(4096)
+            if not chunk:
+                yield buf
+                break
+            buf += chunk
+
+    def single_strip(self, line):
+        regex = r"\n?(.+)\n"
+        try:
+            matches = re.search(regex, line)
+            return matches.group(1)
+        except:
+            pass
+
+
+    def load(self):
+        load_path = os.getcwd()
+        load_path = qt.QFileDialog.getOpenFileName(self
+                                                   , 'Open Stack'
+                                                   , load_path)
+        if len(load_path[0]) > 0:
+            self.list.clear()
+            with open(load_path[0], 'r') as load_file:
+                for line in self.read_lines_delimiter(load_file, '<<entry_delimiter>>'):
+                    if line.strip() != '':
+                        new_item = qt.QListWidgetItem(self.single_strip(line))
+                        self.list.insertItem(0, new_item)
+
+
+
+
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
@@ -75,6 +114,8 @@ class Example(QtGui.QWidget):
         self.clear_list_button.clicked.connect(lambda: self.clear_list(self.list))
         self.save_button = qt.QPushButton('Save List', self)
         self.save_button.clicked.connect(self.save)
+        self.load_button = qt.QPushButton('Load List', self)
+        self.load_button.clicked.connect(self.load)
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
@@ -84,6 +125,7 @@ class Example(QtGui.QWidget):
         grid.addWidget(self.clear_list_button, 2, 11)
         grid.addWidget(self.exit_button, 3, 11)
         grid.addWidget(self.save_button, 4, 11)
+        grid.addWidget(self.load_button, 5, 11)
 
         self.setLayout(grid)
 
@@ -97,7 +139,6 @@ class Example(QtGui.QWidget):
         self.thread.start()
 
     def add_value(self, clip):
-
         new_item = qt.QListWidgetItem(clip)
         self.list.insertItem(0, new_item)
 
