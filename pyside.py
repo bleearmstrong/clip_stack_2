@@ -38,9 +38,13 @@ class Example(QtGui.QWidget):
     def clear(self, listwidget):
         listwidget.clear()
 
+    def return_value(self, index):
+        pyperclip.copy(self.list.currentItem().text())
+
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
+        self.list.clicked.connect(self.return_value)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
         self.clear_button = qt.QPushButton('Clear', self)
