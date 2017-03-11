@@ -56,7 +56,7 @@ class Example(QtGui.QWidget):
         self.setLayout(grid)
 
         self.setGeometry(300, 300, 350, 350)
-        self.setWindowTitle('Icon')
+        self.setWindowTitle('Clip_Stack')
         self.setWindowIcon(QtGui.QIcon('web.png'))
 
     def start(self):
