@@ -55,10 +55,10 @@ class Example(QtGui.QWidget):
                                                    , save_path
                                                    , 'stack.txt')
         if len(save_path[0]) > 0:
-            with open(save_path[0], 'w') as save_file:
+            with open(save_path[0], 'wb') as save_file:
                 for i in range(self.list.count()):
-                    save_file.write(str(self.list.item(i).text()))
-                    save_file.write('\n<<entry_delimiter>>\n')
+                    save_file.write(bytes(self.list.item(i).text(), 'UTF-8'))
+                    save_file.write(b'\n<<entry_delimiter>>\n')
 
     def read_lines_delimiter(self, f, delim):
         buf = ''
@@ -67,7 +67,7 @@ class Example(QtGui.QWidget):
                 pos = buf.index(delim)
                 yield buf[:pos]
                 buf = buf[pos + len(delim):]
-            chunk = f.read(4096)
+            chunk = f.read(4096).decode('UTF-8')
             if not chunk:
                 yield buf
                 break
@@ -76,7 +76,7 @@ class Example(QtGui.QWidget):
     def single_strip(self, line):
         regex = r"\n?(.+)\n"
         try:
-            matches = re.search(regex, line)
+            matches = re.search(regex, line, re.DOTALL)
             return matches.group(1)
         except:
             pass
@@ -90,7 +90,7 @@ class Example(QtGui.QWidget):
         if len(load_path[0]) > 0:
             self.list.clear()
             new_list = list()
-            with open(load_path[0], 'r') as load_file:
+            with open(load_path[0], 'rb') as load_file:
                 for line in self.read_lines_delimiter(load_file, '<<entry_delimiter>>'):
                     if line.strip() != '':
                         new_list.append(line)
@@ -105,7 +105,7 @@ class Example(QtGui.QWidget):
                                                      , insert_path)
         if len(insert_path[0]) > 0:
             new_list = list()
-            with open(insert_path[0], 'r') as insert_file:
+            with open(insert_path[0], 'rb') as insert_file:
                 for line in self.read_lines_delimiter(insert_file, '<<entry_delimiter>>'):
                     if line.strip() != '':
                         new_list.append(line)
@@ -125,13 +125,13 @@ class Example(QtGui.QWidget):
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
         self.clear_item_button = qt.QPushButton('Clear Item', self)
         self.clear_item_button.clicked.connect(self.clear_item)
-        self.clear_list_button = qt.QPushButton('Clear List', self)
+        self.clear_list_button = qt.QPushButton('Clear Stack', self)
         self.clear_list_button.clicked.connect(lambda: self.clear_list(self.list))
-        self.save_button = qt.QPushButton('Save List', self)
+        self.save_button = qt.QPushButton('Save Stack', self)
         self.save_button.clicked.connect(self.save)
-        self.load_button = qt.QPushButton('Load List', self)
+        self.load_button = qt.QPushButton('Load Stack', self)
         self.load_button.clicked.connect(self.load)
-        self.insert_button = qt.QPushButton('Insert List', self)
+        self.insert_button = qt.QPushButton('Insert Stack', self)
         self.insert_button.clicked.connect(self.insert_stack)
 
         grid = qt.QGridLayout()
@@ -140,10 +140,10 @@ class Example(QtGui.QWidget):
         grid.addWidget(self.list, 1, 0, 10, 10)
         grid.addWidget(self.clear_item_button, 1, 11)
         grid.addWidget(self.clear_list_button, 2, 11)
-        grid.addWidget(self.exit_button, 3, 11)
-        grid.addWidget(self.save_button, 4, 11)
-        grid.addWidget(self.load_button, 5, 11)
-        grid.addWidget(self.insert_button, 6, 11)
+        grid.addWidget(self.exit_button, 8, 11)
+        grid.addWidget(self.save_button, 3, 11)
+        grid.addWidget(self.load_button, 4, 11)
+        grid.addWidget(self.insert_button, 5, 11)
 
         self.setLayout(grid)
 
