@@ -34,6 +34,7 @@ class Example(QtGui.QWidget):
     def __init__(self):
         super(Example, self).__init__()
 
+        self.use_regex_b = False
         self.initUI()
         self.start()
 
@@ -81,7 +82,6 @@ class Example(QtGui.QWidget):
         except:
             pass
 
-
     def load(self):
         load_path = os.getcwd()
         load_path = qt.QFileDialog.getOpenFileName(self
@@ -118,22 +118,32 @@ class Example(QtGui.QWidget):
         if self.search_box.text().strip() == '':
             self.stacked.setCurrentWidget(self.list)
         else:
-
             filtered_list = list()
-            print(self.search_box.text())
             for index in range(self.list.count()):
-                print(self.list.item(index).text())
-
-                if self.search_box.text() in str(self.list.item(index).text()):
-                    filtered_list.append(self.list.item(index))
+                if self.use_regex_b:
+                    if re.search(str(self.search_box.text()), str(self.list.item(index).text())):
+                        filtered_list.append(self.list.item(index))
+                else:
+                    if self.search_box.text() in str(self.list.item(index).text()):
+                        filtered_list.append(self.list.item(index))
             self.f_list.clear()
-            print(str(filtered_list[0].text()))
-            # self.f_list.insertItems(0, filtered_list)
-            for i, item in enumerate(filtered_list):
-                new_item = qt.QListWidgetItem(item)
-                # self.list.insertItem(0, new_item)
-                self.f_list.insertItem(i, new_item)
+            if filtered_list:
+                for i, item in enumerate(filtered_list):
+                    new_item = qt.QListWidgetItem(item)
+                    self.f_list.insertItem(i, new_item)
             self.stacked.setCurrentWidget(self.f_list)
+
+    def use_regex(self, state):
+        if state == qc.Qt.Checked:
+            self.use_regex_b = True
+        else:
+            self.use_regex_b = False
+
+    def keep_filtered_list(self):
+        self.list.clear()
+        for i in range(self.f_list.count()):
+            new_item = qt.QListWidgetItem(self.f_list.item(i))
+            self.list.insertItem(i, new_item)
 
     def initUI(self):
         self.list = qt.QListWidget(self)
@@ -167,11 +177,16 @@ class Example(QtGui.QWidget):
         self.insert_button.clicked.connect(self.insert_stack)
         self.search_box = qt.QLineEdit()
         self.search_box.textChanged.connect(self.use_search)
+        self.regex_box = qt.QCheckBox('Use regex', self)
+        self.regex_box.stateChanged.connect(self.use_regex)
+        self.keep_filtered_button = qt.QPushButton('Keep Filtered Stack', self)
+        self.keep_filtered_button.clicked.connect(self.keep_filtered_list)
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
 
         grid.addWidget(self.search_box, 1, 0, 1, 8)
+        grid.addWidget(self.regex_box, 1, 9)
         grid.addWidget(self.stacked, 2, 0, 10, 10)
         grid.addWidget(self.clear_item_button, 2, 11)
         grid.addWidget(self.clear_list_button, 3, 11)
@@ -179,6 +194,7 @@ class Example(QtGui.QWidget):
         grid.addWidget(self.save_button, 4, 11)
         grid.addWidget(self.load_button, 5, 11)
         grid.addWidget(self.insert_button, 6, 11)
+        grid.addWidget(self.keep_filtered_button, 7, 11)
 
         self.setLayout(grid)
 
