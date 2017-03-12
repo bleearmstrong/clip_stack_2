@@ -9,6 +9,22 @@ import PySide.QtGui as qt
 import PySide.QtCore as qc
 
 
+class QListItemSub(qt.QListWidgetItem):
+
+    def __init__(self, item):
+        qt.QListWidgetItem.__init__(self, item)
+        self.full_text = self.text()
+        self.change_display()
+
+    def change_display(self):
+        line_counter = len(str(self.text()).split('\n'))
+        if line_counter > 5:
+            new_display = '\n'.join(str(self.text()).split('\n')[0:5])
+            new_display += '\n...'
+            self.setText(new_display)
+
+
+
 class QCustomThread(qc.QThread):
 
     def __init__(self):
@@ -46,7 +62,7 @@ class Example(QtGui.QWidget):
         listwidget.clear()
 
     def return_value(self, index):
-        pyperclip.copy(self.list.currentItem().text())
+        pyperclip.copy(self.list.currentItem().full_text)
 
     def save(self):
         save_path = os.path.join(os.getcwd()
@@ -58,7 +74,7 @@ class Example(QtGui.QWidget):
         if len(save_path[0]) > 0:
             with open(save_path[0], 'wb') as save_file:
                 for i in range(self.list.count()):
-                    save_file.write(bytes(self.list.item(i).text(), 'UTF-8'))
+                    save_file.write(bytes(self.list.item(i).full_text, 'UTF-8'))
                     save_file.write(b'\n<<entry_delimiter>>\n')
 
     def read_lines_delimiter(self, f, delim):
@@ -95,7 +111,7 @@ class Example(QtGui.QWidget):
                     if line.strip() != '':
                         new_list.append(line)
                 for line in reversed(new_list):
-                    new_item = qt.QListWidgetItem(self.single_strip(line))
+                    new_item = QListItemSub(self.single_strip(line))
                     self.list.insertItem(0, new_item)
 
     def insert_stack(self):
@@ -110,7 +126,7 @@ class Example(QtGui.QWidget):
                     if line.strip() != '':
                         new_list.append(line)
                 for item in reversed(new_list):
-                    new_item = qt.QListWidgetItem(self.single_strip(item))
+                    new_item = QListItemSub(self.single_strip(item))
                     self.list.insertItem(0, new_item)
 
 
@@ -121,15 +137,15 @@ class Example(QtGui.QWidget):
             filtered_list = list()
             for index in range(self.list.count()):
                 if self.use_regex_b:
-                    if re.search(str(self.search_box.text()), str(self.list.item(index).text())):
+                    if re.search(str(self.search_box.text()), str(self.list.item(index).full_text)):
                         filtered_list.append(self.list.item(index))
                 else:
-                    if self.search_box.text() in str(self.list.item(index).text()):
+                    if self.search_box.text() in str(self.list.item(index).full_text):
                         filtered_list.append(self.list.item(index))
             self.f_list.clear()
             if filtered_list:
                 for i, item in enumerate(filtered_list):
-                    new_item = qt.QListWidgetItem(item)
+                    new_item = QListItemSub(item)
                     self.f_list.insertItem(i, new_item)
             self.stacked.setCurrentWidget(self.f_list)
 
@@ -142,7 +158,7 @@ class Example(QtGui.QWidget):
     def keep_filtered_list(self):
         self.list.clear()
         for i in range(self.f_list.count()):
-            new_item = qt.QListWidgetItem(self.f_list.item(i))
+            new_item = QListItemSub(self.f_list.item(i))
             self.list.insertItem(i, new_item)
 
     def initUI(self):
@@ -210,7 +226,7 @@ class Example(QtGui.QWidget):
         self.thread.start()
 
     def add_value(self, clip):
-        new_item = qt.QListWidgetItem(clip)
+        new_item = QListItemSub(clip)
         self.list.insertItem(0, new_item)
 
 
