@@ -8,12 +8,15 @@ import re
 import PySide.QtGui as qt
 import PySide.QtCore as qc
 
-
+#z
 class QListItemSub(qt.QListWidgetItem):
 
-    def __init__(self, item):
+    def __init__(self, item, searched):
         qt.QListWidgetItem.__init__(self, item)
-        self.full_text = self.text()
+        if not searched:
+            self.full_text = self.text()
+        else:
+            self.full_text = item.full_text
         self.change_display()
 
     def change_display(self):
@@ -23,6 +26,14 @@ class QListItemSub(qt.QListWidgetItem):
             new_display += '\n...'
             self.setText(new_display)
 
+    def change_display_search(self, regex_b, pattern):
+        temp_list = self.full_text.split('\n')
+        if regex_b:
+            search_index = min([i for i, line in enumerate(temp_list) if re.search(pattern, line)])
+        else:
+            search_index = min([i for i, line in enumerate(temp_list) if pattern in line])
+        new_display = '\n'.join(temp_list[max([0, search_index  - 2]):min([search_index + 3, len(temp_list)])])
+        self.setText(new_display)
 
 
 class QCustomThread(qc.QThread):
@@ -112,7 +123,7 @@ class Example(QtGui.QWidget):
                     if line.strip() != '':
                         new_list.append(line)
                 for line in reversed(new_list):
-                    new_item = QListItemSub(self.single_strip(line))
+                    new_item = QListItemSub(self.single_strip(line), False)
                     self.list.insertItem(0, new_item)
 
     def insert_stack(self):
@@ -127,7 +138,7 @@ class Example(QtGui.QWidget):
                     if line.strip() != '':
                         new_list.append(line)
                 for item in reversed(new_list):
-                    new_item = QListItemSub(self.single_strip(item))
+                    new_item = QListItemSub(self.single_strip(item), False)
                     self.list.insertItem(0, new_item)
 
 
@@ -139,14 +150,24 @@ class Example(QtGui.QWidget):
             for index in range(self.list.count()):
                 if self.use_regex_b:
                     if re.search(str(self.search_box.text()), str(self.list.item(index).full_text)):
-                        filtered_list.append(self.list.item(index))
+                        if not re.search(str(self.search_box.text()), str(self.list.item(index).text())):
+                            reset_text = True
+                        else:
+                            reset_text = False
+                        filtered_list.append((self.list.item(index), reset_text))
                 else:
                     if self.search_box.text() in str(self.list.item(index).full_text):
-                        filtered_list.append(self.list.item(index))
+                        if self.search_box.text() not in str(self.list.item(index).text()):
+                            reset_text = True
+                        else:
+                            reset_text = False
+                        filtered_list.append((self.list.item(index), reset_text))
             self.f_list.clear()
             if filtered_list:
                 for i, item in enumerate(filtered_list):
-                    new_item = QListItemSub(item)
+                    new_item = QListItemSub(item[0], True)
+                    if item[1]:
+                        new_item.change_display_search(self.use_regex_b, str(self.search_box.text()))
                     self.f_list.insertItem(i, new_item)
             self.stacked.setCurrentWidget(self.f_list)
 
@@ -159,7 +180,7 @@ class Example(QtGui.QWidget):
     def keep_filtered_list(self):
         self.list.clear()
         for i in range(self.f_list.count()):
-            new_item = QListItemSub(self.f_list.item(i))
+            new_item = QListItemSub(self.f_list.item(i), False)
             self.list.insertItem(i, new_item)
 
     def initUI(self):
@@ -184,14 +205,17 @@ class Example(QtGui.QWidget):
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
         self.clear_item_button = qt.QPushButton('Clear Item', self)
         self.clear_item_button.clicked.connect(self.clear_item)
+        self.clear_item_button.clicked.connect(self.use_search)
         self.clear_list_button = qt.QPushButton('Clear Stack', self)
         self.clear_list_button.clicked.connect(lambda: self.clear_list(self.list))
         self.save_button = qt.QPushButton('Save Stack', self)
         self.save_button.clicked.connect(self.save)
         self.load_button = qt.QPushButton('Load Stack', self)
         self.load_button.clicked.connect(self.load)
+        self.load_button.clicked.connect(self.use_search)
         self.insert_button = qt.QPushButton('Insert Stack', self)
         self.insert_button.clicked.connect(self.insert_stack)
+        self.insert_button.clicked.connect(self.use_search)
         self.search_box = qt.QLineEdit()
         self.search_box.setPlaceholderText('Search')
         self.search_box.textChanged.connect(self.use_search)
@@ -227,7 +251,7 @@ class Example(QtGui.QWidget):
         self.thread.start()
 
     def add_value(self, clip):
-        new_item = QListItemSub(clip)
+        new_item = QListItemSub(clip, False)
         self.list.insertItem(0, new_item)
 
 
