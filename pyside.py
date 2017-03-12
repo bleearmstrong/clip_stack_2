@@ -180,6 +180,7 @@ class Example(QtGui.QWidget):
         self.search_box.textChanged.connect(self.use_search)
         self.regex_box = qt.QCheckBox('Use regex', self)
         self.regex_box.stateChanged.connect(self.use_regex)
+        self.regex_box.stateChanged.connect(self.use_search)
         self.keep_filtered_button = qt.QPushButton('Keep Filtered Stack', self)
         self.keep_filtered_button.clicked.connect(self.keep_filtered_list)
 
