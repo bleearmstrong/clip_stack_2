@@ -248,6 +248,7 @@ class Example(QtGui.QWidget):
     def start(self):
         self.thread = QCustomThread()
         self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.add_value)
+        self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.use_search)
         self.thread.start()
 
     def add_value(self, clip):
