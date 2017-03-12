@@ -60,6 +60,7 @@ class Example(QtGui.QWidget):
 
     def clear_list(self, listwidget):
         listwidget.clear()
+        self.stacked.setCurrentWidget(self.list)
 
     def return_value(self, index):
         pyperclip.copy(self.list.currentItem().full_text)
