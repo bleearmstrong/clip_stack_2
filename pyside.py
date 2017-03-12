@@ -113,6 +113,28 @@ class Example(QtGui.QWidget):
                     new_item = qt.QListWidgetItem(self.single_strip(item))
                     self.list.insertItem(0, new_item)
 
+
+    def use_search(self):
+        if self.search_box.text().strip() == '':
+            self.stacked.setCurrentWidget(self.list)
+        else:
+
+            filtered_list = list()
+            print(self.search_box.text())
+            for index in range(self.list.count()):
+                print(self.list.item(index).text())
+
+                if self.search_box.text() in str(self.list.item(index).text()):
+                    filtered_list.append(self.list.item(index))
+            self.f_list.clear()
+            print(str(filtered_list[0].text()))
+            # self.f_list.insertItems(0, filtered_list)
+            for i, item in enumerate(filtered_list):
+                new_item = qt.QListWidgetItem(item)
+                # self.list.insertItem(0, new_item)
+                self.f_list.insertItem(i, new_item)
+            self.stacked.setCurrentWidget(self.f_list)
+
     def initUI(self):
         self.list = qt.QListWidget(self)
         self.list.setAlternatingRowColors(True)
@@ -120,7 +142,17 @@ class Example(QtGui.QWidget):
                                 "background-color: white;"
                                 "color: black;"
                                 )
+        self.f_list = qt.QListWidget(self)
+        self.f_list.setAlternatingRowColors(True)
+        self.f_list.setStyleSheet("alternate-background-color: grey;"
+                                "background-color: white;"
+                                "color: black;"
+                                )
         self.list.clicked.connect(self.return_value)
+        self.stacked = qt.QStackedWidget(self)
+        self.stacked.addWidget(self.f_list)
+        self.stacked.addWidget(self.list)
+        self.stacked.setCurrentWidget(self.list)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
         self.clear_item_button = qt.QPushButton('Clear Item', self)
@@ -133,17 +165,20 @@ class Example(QtGui.QWidget):
         self.load_button.clicked.connect(self.load)
         self.insert_button = qt.QPushButton('Insert Stack', self)
         self.insert_button.clicked.connect(self.insert_stack)
+        self.search_box = qt.QLineEdit()
+        self.search_box.textChanged.connect(self.use_search)
 
         grid = qt.QGridLayout()
         grid.setSpacing(5)
 
-        grid.addWidget(self.list, 1, 0, 10, 10)
-        grid.addWidget(self.clear_item_button, 1, 11)
-        grid.addWidget(self.clear_list_button, 2, 11)
-        grid.addWidget(self.exit_button, 8, 11)
-        grid.addWidget(self.save_button, 3, 11)
-        grid.addWidget(self.load_button, 4, 11)
-        grid.addWidget(self.insert_button, 5, 11)
+        grid.addWidget(self.search_box, 1, 0, 1, 8)
+        grid.addWidget(self.stacked, 2, 0, 10, 10)
+        grid.addWidget(self.clear_item_button, 2, 11)
+        grid.addWidget(self.clear_list_button, 3, 11)
+        grid.addWidget(self.exit_button, 9, 11)
+        grid.addWidget(self.save_button, 4, 11)
+        grid.addWidget(self.load_button, 5, 11)
+        grid.addWidget(self.insert_button, 6, 11)
 
         self.setLayout(grid)
 
