@@ -176,6 +176,7 @@ class Example(QtGui.QWidget):
         self.insert_button = qt.QPushButton('Insert Stack', self)
         self.insert_button.clicked.connect(self.insert_stack)
         self.search_box = qt.QLineEdit()
+        self.search_box.setPlaceholderText('Search')
         self.search_box.textChanged.connect(self.use_search)
         self.regex_box = qt.QCheckBox('Use regex', self)
         self.regex_box.stateChanged.connect(self.use_regex)
