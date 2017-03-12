@@ -8,8 +8,8 @@ import re
 import PySide.QtGui as qt
 import PySide.QtCore as qc
 
-#z
 class QListItemSub(qt.QListWidgetItem):
+
 
     def __init__(self, item, searched):
         qt.QListWidgetItem.__init__(self, item)
@@ -73,9 +73,6 @@ class Example(QtGui.QWidget):
         listwidget.clear()
         self.stacked.setCurrentWidget(self.list)
 
-    def return_value(self, index):
-        pyperclip.copy(self.list.currentItem().full_text)
-
     def save(self):
         save_path = os.path.join(os.getcwd()
                                  , 'stack.txt')
@@ -88,6 +85,12 @@ class Example(QtGui.QWidget):
                 for i in range(self.list.count()):
                     save_file.write(bytes(self.list.item(i).full_text, 'UTF-8'))
                     save_file.write(b'\n<<entry_delimiter>>\n')
+
+    def return_value(self, index):
+        if self.stacked.currentIndex() == 1:
+            pyperclip.copy(self.list.currentItem().full_text)
+        else:
+            pyperclip.copy(self.f_list.currentItem().full_text)
 
     def read_lines_delimiter(self, f, delim):
         buf = ''
@@ -146,6 +149,7 @@ class Example(QtGui.QWidget):
         if self.search_box.text().strip() == '':
             self.stacked.setCurrentWidget(self.list)
         else:
+            self.stacked.setCurrentWidget(self.f_list)
             filtered_list = list()
             for index in range(self.list.count()):
                 if self.use_regex_b:
@@ -169,7 +173,6 @@ class Example(QtGui.QWidget):
                     if item[1]:
                         new_item.change_display_search(self.use_regex_b, str(self.search_box.text()))
                     self.f_list.insertItem(i, new_item)
-            self.stacked.setCurrentWidget(self.f_list)
 
     def use_regex(self, state):
         if state == qc.Qt.Checked:
@@ -197,6 +200,7 @@ class Example(QtGui.QWidget):
                                 "color: black;"
                                 )
         self.list.clicked.connect(self.return_value)
+        self.f_list.clicked.connect(self.return_value)
         self.stacked = qt.QStackedWidget(self)
         self.stacked.addWidget(self.f_list)
         self.stacked.addWidget(self.list)
