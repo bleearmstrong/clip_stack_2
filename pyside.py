@@ -88,9 +88,11 @@ class Example(QtGui.QWidget):
 
     def return_value(self, index):
         if self.stacked.currentIndex() == 1:
-            pyperclip.copy(self.list.currentItem().full_text)
+            this_list = self.list
         else:
-            pyperclip.copy(self.f_list.currentItem().full_text)
+            this_list = self.f_list
+        this_current_item = this_list.currentItem()
+        pyperclip.copy(this_current_item.full_text)
 
     def read_lines_delimiter(self, f, delim):
         buf = ''
