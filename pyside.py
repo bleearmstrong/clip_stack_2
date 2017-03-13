@@ -32,7 +32,10 @@ class QListItemSub(qt.QListWidgetItem):
             search_index = min([i for i, line in enumerate(temp_list) if re.search(pattern, line)])
         else:
             search_index = min([i for i, line in enumerate(temp_list) if pattern in line])
-        new_display = '\n'.join(temp_list[max([0, search_index  - 2]):min([search_index + 3, len(temp_list)])])
+        if search_index + 3 < len(temp_list):
+            new_display = '...\n' + '\n'.join(temp_list[search_index - 2:search_index + 3]) + '\n...'
+        else:
+            new_display = '...\n' + '\n'.join(temp_list[-5:])
         self.setText(new_display)
 
 
