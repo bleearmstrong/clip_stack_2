@@ -4,6 +4,7 @@ import time
 import pyperclip
 import os
 import re
+import uuid
 
 import PySide.QtGui as qt
 import PySide.QtCore as qc
@@ -77,6 +78,8 @@ class Example(QtGui.QWidget):
         self.stacked.setCurrentWidget(self.list)
 
     def save(self):
+        header = '<<entry_delimiter ' + str(uuid.uuid4()) + '>>'
+        delimiter_string = '\r\n' + header + '\r\n'
         save_path = os.path.join(os.getcwd()
                                  , 'stack.txt')
         save_path = qt.QFileDialog.getSaveFileName(self
@@ -85,9 +88,10 @@ class Example(QtGui.QWidget):
                                                    , 'stack.txt')
         if len(save_path[0]) > 0:
             with open(save_path[0], 'wb') as save_file:
+                save_file.write(bytes(header + '\r\n', 'UTF-8'))
                 for i in range(self.list.count()):
                     save_file.write(bytes(self.list.item(i).full_text, 'UTF-8'))
-                    save_file.write(b'\n<<entry_delimiter>>\n')
+                    save_file.write(bytes(delimiter_string, 'UTF-8'))
 
     def return_value(self, index):
         if self.stacked.currentIndex() == 1:
@@ -127,7 +131,8 @@ class Example(QtGui.QWidget):
             self.list.clear()
             new_list = list()
             with open(load_path[0], 'rb') as load_file:
-                for line in self.read_lines_delimiter(load_file, '<<entry_delimiter>>'):
+                delimiter = load_file.readline()
+                for line in self.read_lines_delimiter(load_file, delimiter.decode('UTF-8')):
                     if line.strip() != '':
                         new_list.append(line)
                 for line in reversed(new_list):
@@ -142,7 +147,8 @@ class Example(QtGui.QWidget):
         if len(insert_path[0]) > 0:
             new_list = list()
             with open(insert_path[0], 'rb') as insert_file:
-                for line in self.read_lines_delimiter(insert_file, '<<entry_delimiter>>'):
+                delimiter = insert_file.readline()
+                for line in self.read_lines_delimiter(insert_file, delimiter.decode('UTF-8')):
                     if line.strip() != '':
                         new_list.append(line)
                 for item in reversed(new_list):
