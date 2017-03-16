@@ -42,10 +42,9 @@ class QListItemSub(qt.QListWidgetItem):
 
 class QCustomThread(qc.QThread):
 
-    def __init__(self):
+    def __init__(self, start_string):
         qc.QThread.__init__(self)
-        self.previous_value = ''
-        self.new_value = ''
+        self.previous_value = start_string
 
     def get_string(self):
         self.new_value = pyperclip.paste()
@@ -59,6 +58,9 @@ class QCustomThread(qc.QThread):
             if x:
                 self.emit(qc.SIGNAL('add_value(QString)'), x)
             time.sleep(0.1)
+
+    def stop(self):
+        self.terminate()
 
 
 class Example(QtGui.QWidget):
@@ -94,12 +96,15 @@ class Example(QtGui.QWidget):
                     save_file.write(bytes(delimiter_string, 'UTF-8'))
 
     def return_value(self, index):
+        self.thread.stop()
         if self.stacked.currentIndex() == 1:
             this_list = self.list
         else:
             this_list = self.f_list
         this_current_item = this_list.currentItem()
-        pyperclip.copy(this_current_item.full_text)
+        this_text = this_current_item.full_text
+        pyperclip.copy(this_text)
+        self.restart(this_text)
 
     def read_lines_delimiter(self, f, delim):
         buf = ''
@@ -154,7 +159,6 @@ class Example(QtGui.QWidget):
                 for item in reversed(new_list):
                     new_item = QListItemSub(self.single_strip(item), False)
                     self.list.insertItem(0, new_item)
-
 
     def use_search(self):
         if self.search_box.text().strip() == '':
@@ -261,7 +265,13 @@ class Example(QtGui.QWidget):
         self.setWindowIcon(QtGui.QIcon('web.png'))
 
     def start(self):
-        self.thread = QCustomThread()
+        self.thread = QCustomThread('')
+        self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.add_value)
+        self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.use_search)
+        self.thread.start()
+
+    def restart(self, value):
+        self.thread = QCustomThread(value)
         self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.add_value)
         self.connect(self.thread, qc.SIGNAL('add_value(QString)'), self.use_search)
         self.thread.start()
