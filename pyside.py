@@ -21,9 +21,9 @@ class QListItemSub(qt.QListWidgetItem):
         self.change_display()
 
     def change_display(self):
-        line_counter = len(str(self.text()).split('\n'))
+        line_counter = len(str(self.full_text).split('\n'))
         if line_counter > 5:
-            new_display = '\n'.join(str(self.text()).split('\n')[0:5])
+            new_display = '\n'.join(str(self.full_text).split('\n')[0:5])
             new_display += '\n...'
             self.setText(new_display)
 
@@ -198,7 +198,7 @@ class Example(QtGui.QWidget):
     def keep_filtered_list(self):
         self.list.clear()
         for i in range(self.f_list.count()):
-            new_item = QListItemSub(self.f_list.item(i), False)
+            new_item = QListItemSub(self.f_list.item(i), True)
             self.list.insertItem(i, new_item)
 
     def initUI(self):
@@ -211,9 +211,9 @@ class Example(QtGui.QWidget):
         self.f_list = qt.QListWidget(self)
         self.f_list.setAlternatingRowColors(True)
         self.f_list.setStyleSheet("alternate-background-color: grey;"
-                                "background-color: white;"
-                                "color: black;"
-                                )
+                                  "background-color: white;"
+                                  "color: black;"
+                                 )
         self.list.clicked.connect(self.return_value)
         self.f_list.clicked.connect(self.return_value)
         self.stacked = qt.QStackedWidget(self)
