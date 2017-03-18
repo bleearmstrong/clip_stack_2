@@ -221,16 +221,29 @@ class Example(QtGui.QWidget):
         self.grid.addWidget(self.search_box, 1, 0, 1, 8)
         self.grid.addWidget(self.regex_box, 1, 9)
         self.grid.addWidget(self.quick_mode_box, 1, 11)
-        self.grid.addWidget(self.stacked, 2, 0, 10, 10)
+        self.grid.addWidget(self.stacked, 2, 0, 11, 10)
         self.grid.addWidget(self.clear_item_button, 2, 11)
         self.grid.addWidget(self.clear_list_button, 3, 11)
-        self.grid.addWidget(self.exit_button, 11, 11)
+        self.grid.addWidget(self.exit_button, 12, 11)
         self.grid.addWidget(self.save_button, 4, 11)
         self.grid.addWidget(self.load_button, 5, 11)
         self.grid.addWidget(self.insert_button, 6, 11)
+        self.grid.addWidget(self.copy_selection_button, 8, 11)
+        self.grid.addWidget(self.keep_selection_button, 9, 11)
+        self.grid.addWidget(self.clear_selection_button, 10, 11)
         self.grid.addWidget(self.keep_filtered_button, 7, 11)
 
+        if self.quick_mode_b:
+            self.copy_selection_button.hide()
+            self.keep_selection_button.hide()
+            self.clear_selection_button.hide()
+        else:
+            self.copy_selection_button.show()
+            self.keep_selection_button.show()
+            self.clear_selection_button.show()
+
         self.setLayout(self.grid)
+        self.grid.setSpacing(5)
 
     def initUI(self):
         self.list = qt.QListWidget(self)
@@ -278,9 +291,12 @@ class Example(QtGui.QWidget):
         self.quick_mode_box.stateChanged.connect(self.layout)
         self.keep_filtered_button = qt.QPushButton('Keep Filtered Stack', self)
         self.keep_filtered_button.clicked.connect(self.keep_filtered_list)
+        self.copy_selection_button = qt.QPushButton('Copy Selected', self)
+        self.clear_selection_button = qt.QPushButton('Clear Selected', self)
+        self.keep_selection_button = qt.QPushButton('Keep Selected', self)
 
         self.grid = qt.QGridLayout()
-        self.grid.setSpacing(5)
+        self.grid.setVerticalSpacing(5)
 
 
         self.layout()
