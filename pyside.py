@@ -199,8 +199,12 @@ class Example(QtGui.QWidget):
     def quick_mode(self, state):
         if state == qc.Qt.Checked:
             self.quick_mode_b = True
+            self.list.clicked.connect(self.return_value)
+            self.f_list.clicked.connect(self.return_value)
         else:
             self.quick_mode_b = False
+            self.list.clicked.disconnect(self.return_value)
+            self.f_list.clicked.disconnect(self.return_value)
 
 
     def keep_filtered_list(self):
