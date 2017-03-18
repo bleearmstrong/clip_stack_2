@@ -202,6 +202,7 @@ class Example(QtGui.QWidget):
         else:
             self.quick_mode_b = False
 
+
     def keep_filtered_list(self):
         self.list.clear()
         for i in range(self.f_list.count()):
@@ -209,13 +210,21 @@ class Example(QtGui.QWidget):
             self.list.insertItem(i, new_item)
 
     def layout(self):
+
+        if self.quick_mode_b:
+            self.list.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+            self.f_list.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        else:
+            self.list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+            self.f_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
         self.grid.addWidget(self.search_box, 1, 0, 1, 8)
         self.grid.addWidget(self.regex_box, 1, 9)
         self.grid.addWidget(self.quick_mode_box, 1, 11)
         self.grid.addWidget(self.stacked, 2, 0, 10, 10)
         self.grid.addWidget(self.clear_item_button, 2, 11)
         self.grid.addWidget(self.clear_list_button, 3, 11)
-        self.grid.addWidget(self.exit_button, 9, 11)
+        self.grid.addWidget(self.exit_button, 11, 11)
         self.grid.addWidget(self.save_button, 4, 11)
         self.grid.addWidget(self.load_button, 5, 11)
         self.grid.addWidget(self.insert_button, 6, 11)
