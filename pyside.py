@@ -74,8 +74,9 @@ class Example(QtGui.QWidget):
         self.start()
 
     def clear_item(self):
-        item = self.list.selectedItems()
-        self.list.takeItem(self.list.row(item[0]))
+        items = self.list.selectedItems()
+        for item in items:
+            self.list.takeItem(self.list.row(item))
 
     def clear_list(self, listwidget):
         listwidget.clear()
@@ -235,17 +236,14 @@ class Example(QtGui.QWidget):
         self.grid.addWidget(self.insert_button, 6, 11)
         self.grid.addWidget(self.copy_selection_button, 8, 11)
         self.grid.addWidget(self.keep_selection_button, 9, 11)
-        self.grid.addWidget(self.clear_selection_button, 10, 11)
         self.grid.addWidget(self.keep_filtered_button, 7, 11)
 
         if self.quick_mode_b:
             self.copy_selection_button.hide()
             self.keep_selection_button.hide()
-            self.clear_selection_button.hide()
         else:
             self.copy_selection_button.show()
             self.keep_selection_button.show()
-            self.clear_selection_button.show()
 
         self.setLayout(self.grid)
         self.grid.setSpacing(5)
@@ -271,7 +269,7 @@ class Example(QtGui.QWidget):
         self.stacked.setCurrentWidget(self.list)
         self.exit_button = qt.QPushButton('Exit', self)
         self.exit_button.clicked.connect(qc.QCoreApplication.instance().quit)
-        self.clear_item_button = qt.QPushButton('Clear Item', self)
+        self.clear_item_button = qt.QPushButton('Clear Item(s)', self)
         self.clear_item_button.clicked.connect(self.clear_item)
         self.clear_item_button.clicked.connect(self.use_search)
         self.clear_list_button = qt.QPushButton('Clear Stack', self)
@@ -298,14 +296,12 @@ class Example(QtGui.QWidget):
         self.keep_filtered_button.clicked.connect(self.keep_filtered_list)
         self.copy_selection_button = qt.QPushButton('Copy Selected', self)
         self.copy_selection_button.clicked.connect(self.copy_selection)
-        self.clear_selection_button = qt.QPushButton('Clear Selected', self)
         self.keep_selection_button = qt.QPushButton('Keep Selected', self)
         self.keep_selection_button.clicked.connect(self.keep_selection)
         self.keep_selection_button.clicked.connect(self.use_search)
 
         self.grid = qt.QGridLayout()
         self.grid.setVerticalSpacing(5)
-
 
         self.layout()
 
