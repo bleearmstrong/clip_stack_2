@@ -100,10 +100,7 @@ class Example(QtGui.QWidget):
 
     def return_value(self, index):
         self.thread.stop()
-        if self.stacked.currentIndex() == 1:
-            this_list = self.list
-        else:
-            this_list = self.f_list
+        this_list = self.get_active_list()
         this_current_item = this_list.currentItem()
         this_text = this_current_item.full_text
         pyperclip.copy(this_text)
@@ -325,20 +322,19 @@ class Example(QtGui.QWidget):
         new_item = QListItemSub(clip, False)
         self.list.insertItem(0, new_item)
 
-    def copy_selection(self):
-        #TODO make this section its own function
+    def get_active_list(self):
         if self.stacked.currentIndex() == 1:
             this_list = self.list
         else:
             this_list = self.f_list
+        return this_list
+
+    def copy_selection(self):
+        this_list = self.get_active_list()
         pyperclip.copy('\n'.join([item.full_text for item in this_list.selectedItems()]))
 
     def keep_selection(self):
-        # TODO make this section its own function
-        if self.stacked.currentIndex() == 1:
-            this_list = self.list
-        else:
-            this_list = self.f_list
+        this_list = self.get_active_list()
         items = this_list.selectedItems()
         self.list.clear()
         for item in items:
