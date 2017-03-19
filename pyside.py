@@ -9,8 +9,8 @@ import uuid
 import PySide.QtGui as qt
 import PySide.QtCore as qc
 
-class QListItemSub(qt.QListWidgetItem):
 
+class QListItemSub(qt.QListWidgetItem):
 
     def __init__(self, item, searched):
         qt.QListWidgetItem.__init__(self, item)
@@ -64,6 +64,7 @@ class QCustomThread(qc.QThread):
 
 
 class Example(QtGui.QWidget):
+
     def __init__(self):
         super(Example, self).__init__()
 
@@ -296,8 +297,11 @@ class Example(QtGui.QWidget):
         self.keep_filtered_button = qt.QPushButton('Keep Filtered Stack', self)
         self.keep_filtered_button.clicked.connect(self.keep_filtered_list)
         self.copy_selection_button = qt.QPushButton('Copy Selected', self)
+        self.copy_selection_button.clicked.connect(self.copy_selection)
         self.clear_selection_button = qt.QPushButton('Clear Selected', self)
         self.keep_selection_button = qt.QPushButton('Keep Selected', self)
+        self.keep_selection_button.clicked.connect(self.keep_selection)
+        self.keep_selection_button.clicked.connect(self.use_search)
 
         self.grid = qt.QGridLayout()
         self.grid.setVerticalSpacing(5)
@@ -324,6 +328,26 @@ class Example(QtGui.QWidget):
     def add_value(self, clip):
         new_item = QListItemSub(clip, False)
         self.list.insertItem(0, new_item)
+
+    def copy_selection(self):
+        #TODO make this section its own function
+        if self.stacked.currentIndex() == 1:
+            this_list = self.list
+        else:
+            this_list = self.f_list
+        pyperclip.copy('\n'.join([item.full_text for item in this_list.selectedItems()]))
+
+    def keep_selection(self):
+        # TODO make this section its own function
+        if self.stacked.currentIndex() == 1:
+            this_list = self.list
+        else:
+            this_list = self.f_list
+        items = this_list.selectedItems()
+        self.list.clear()
+        for item in items:
+            new_item = QListItemSub(item.full_text, False)
+            self.list.insertItem(0, new_item)
 
 
 def main():
