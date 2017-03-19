@@ -63,10 +63,10 @@ class QCustomThread(qc.QThread):
         self.terminate()
 
 
-class Example(QtGui.QWidget):
+class ClipStack(QtGui.QWidget):
 
     def __init__(self):
-        super(Example, self).__init__()
+        super(ClipStack, self).__init__()
 
         self.use_regex_b = False
         self.quick_mode_b = True
@@ -204,7 +204,6 @@ class Example(QtGui.QWidget):
             self.quick_mode_b = False
             self.list.clicked.disconnect(self.return_value)
             self.f_list.clicked.disconnect(self.return_value)
-
 
     def keep_filtered_list(self):
         self.list.clear()
@@ -344,8 +343,8 @@ class Example(QtGui.QWidget):
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    ex = Example()
-    ex.show()
+    cs = ClipStack()
+    cs.show()
     sys.exit(app.exec_())
 
 
